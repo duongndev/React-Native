@@ -1,0 +1,13 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "userName": "duongnd",
+      "password": "123",
+      "firstName": "Dương",
+      "lastName": "Nguyễn",
+      "email": "ducduong.contact@gmail.com",
+      "gender": "Male"
+    }
+  ]
+}

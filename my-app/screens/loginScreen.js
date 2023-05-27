@@ -1,13 +1,14 @@
 import React, {useState} from "react";
 import {
     Alert,
-    StyleSheet,
     View,
     Image,
 } from "react-native";
 import CustomBottom from "../components/CustomButton";
 import CustomInput from "../components/CustomInput";
 import logo from "../assets/logo.png"
+import styles from "../styles/loginStyles";
+
 const LoginScreen = (props) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -42,7 +43,7 @@ const LoginScreen = (props) => {
             return;
         }
         let request = {username: username, password: password};
-        console.info('authInfo', + JSON.stringify(request));
+        console.info('authInfo', +JSON.stringify(request));
         if (users) {
             const authInfo = users.find((user) => user.username === request.username);
             if (!authInfo) {
@@ -98,30 +99,10 @@ const LoginScreen = (props) => {
                 setValue={setPassword}
                 secureTextEntry={true}
             />
-            <CustomBottom title={'Login'} onPress={doLogin} />
-            <CustomBottom title={'Back to home screen'} onPress={navigateToHome} />
+            <CustomBottom title={'Login'} onPress={doLogin}/>
+            <CustomBottom title={'Back to home screen'} onPress={navigateToHome}/>
         </View>
     );
 };
 export default LoginScreen;
 
-const styles = StyleSheet.create({
-    root: {
-        flex: 1,
-        alignItems: "center",
-        padding: 10,
-        marginTop: 10,
-    },
-    logo: {
-        width: "50%",
-        height: "50%",
-        resizeMode: "contain",
-    },
-    textInput: {
-        width: "100%",
-        height: 40,
-        borderWidth: 1,
-        marginTop: 10,
-        marginBottom: 15,
-    },
-});

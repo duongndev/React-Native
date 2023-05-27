@@ -1,24 +1,24 @@
 import { StyleSheet } from 'react-native';
 
+
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
+  root: {
+    flex: 1,
+    alignItems: "center",
+    padding: 10,
+    marginTop: 10,
   },
-  fontBold: {
-    fontWeight: 'bold',
+  logo: {
+    width: "50%",
+    height: "50%",
+    resizeMode: "contain",
   },
-  fontSemibold: {
-    fontWeight: '400',
-  },
-  red: {
-    fontSize: 30,
-    color: 'red',
-  },
-  blue: {
-    fontSize: 20,
-    color: 'blue',
+  textInput: {
+    width: "100%",
+    height: 40,
+    borderWidth: 1,
+    marginTop: 10,
+    marginBottom: 15,
   },
 });
 

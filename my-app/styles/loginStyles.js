@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: "50%",
-    height: "50%",
+    height: "30%",
     resizeMode: "contain",
   },
   textInput: {

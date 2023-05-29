@@ -7,7 +7,7 @@ const HomeScreen = ({navigation}) => {
 
     async function getListStudent() {
         try {
-            const API_URL = 'http://192.168.1.243:3000/students';
+            const API_URL = 'http://192.168.110.107:3000/students';
             const response = await fetch(API_URL);
             const data = await response.json();
             setStudents(data);

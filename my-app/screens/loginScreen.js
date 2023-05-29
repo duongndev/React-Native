@@ -17,7 +17,7 @@ const LoginScreen = (props) => {
 
     async function fetchData() {
         try {
-            const API_URL = "http://192.168.1.243:3000/users";
+            const API_URL = "http://192.168.110.107:3000/users";
             const response = await fetch(API_URL);
             const data = await response.json();
             return data;

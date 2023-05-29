@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   txtHeader: {
+    marginTop: 15,
     fontSize: 18,
     fontWeight: 'bold'
   },

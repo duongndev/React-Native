@@ -1,86 +1,109 @@
-import React, {useState} from "react";
-import {
-    Alert,
-    View,
-    Image,
-} from "react-native";
+import React, {useEffect, useState} from "react";
+import {Alert, View, Image, Text} from "react-native";
 import CustomBottom from "../components/CustomButton";
 import CustomInput from "../components/CustomInput";
-import logo from "../assets/logo.png"
+import logo from "../assets/logo.png";
 import styles from "../styles/loginStyles";
+import {useNavigation} from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LoginScreen = (props) => {
+const LoginScreen = () => {
+    const navigation = useNavigation();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [users, setUser] = useState([]);
+    const [usernameError, setUsernameError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
-    let users = [];
-
-    async function fetchData() {
+    const fetchData = async () => {
         try {
-            const API_URL = "http://192.168.110.107:3000/users";
+            const API_URL = "http://192.168.110.107:8000/users";
             const response = await fetch(API_URL);
             const data = await response.json();
-            return data;
+            setUser(data);
         } catch (error) {
             console.error("Fetch data failed " + error);
             return null;
         }
     }
 
-    async function storeData() {
-        users = await fetchData();
-    }
 
-    storeData();
+    const validateAuthInfo = (authInfo) => {
+        if (authInfo.username === '') {
+            setUsernameError('Username field cannot be empty');
+            return false;
+        } else if (authInfo.password === '') {
+            setUsernameError('');
+            setPasswordError('Password field cannot be empty');
+            return false;
+        }
+        return true;
+    };
+    const clearError = (usernameError, passwordError) => {
+        if (usernameError) setUsernameError('');
+        if (passwordError) setPasswordError('');
+    };
+
+
+    const storeAuthInfo = async (value) => {
+        try {
+            const authInfo = JSON.stringify(value);
+            await AsyncStorage.setItem('authInfo', authInfo);
+        } catch (error) {
+            console.info(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
 
     const doLogin = () => {
-        if (username.length == 0) {
-            alert('Vui lòng nhập username');
-            return;
-        }
-        if (password.length == 0) {
-            alert('Vui lòng nhập password');
-            return;
-        }
         let request = {username: username, password: password};
-        console.info('authInfo', +JSON.stringify(request));
+        console.info("authInfo", +JSON.stringify(request));
+        if (username.length === 0 && password.length === 0) {
+            setUsernameError('Please enter username')
+            setPasswordError('Please enter password')
+            return;
+        }
         if (users) {
-            const authInfo = users.find((user) => user.username === request.username);
-            if (!authInfo) {
-                Alert.alert('Notification', 'Không tìm thấy thông tin user', [{
-                    text: 'Cancel',
-                    onPress: () => console.error('Không tìm thấy ' + request.username)
-                }]);
-            } else {
-                if (!(authInfo.password === request.password)) {
-                    Alert.alert('Notification', 'Mật khẩu không chính xác', [{
-                        text: 'Cancel',
-                        onPress: () => console.error('Mật khẩu không chính xác cho ' + request.username)
-                    }]);
+            const validateResult = validateAuthInfo(request);
+            if (validateResult === true) {
+                const authInfo = users.find((user) => user.username === request.username);
+                if (!authInfo) {
+                    clearError(usernameError, passwordError);
+                    setUsernameError('User information not found')
+                    console.error("Not found " + request.username)
+                    // Alert.alert("Notification", "User information not found", [
+                    //     {
+                    //         text: "Cancel",
+                    //         onPress: () => console.error("Not found" + request.username),
+                    //     },
+                    // ]);
                 } else {
-                    Alert.alert('Notification', 'Login successfully ' + request.username, [
-                        {text: 'OK', onPress: () => navigateToHome()},
-                        {text: 'Cancel', onPress: () => console.info('Press Cancel')}
-                    ]);
+                    if (!(authInfo.password === request.password)) {
+                        clearError(usernameError, passwordError);
+                        setPasswordError('Password is not correct');
+                    } else {
+                        clearError(usernameError, passwordError);
+                        storeAuthInfo(authInfo);
+                        Alert.alert(
+                            "Notification",
+                            "Login successfully " + request.username,
+                            [
+                                {text: "OK", onPress: () => navigateToHome()},
+                                {text: "Cancel", onPress: () => console.info("Press Cancel")},
+                            ]
+                        );
+                    }
                 }
-
             }
-        }
-    };
 
-    const onPressSignIn = () => {
-        let request = {username: username, password: password};
-        Alert.alert("Thông báo", "Xin chào " + request.username, [
-            {
-                text: "Cancel",
-                onPress: () => console.log("Cancel Pressed"),
-                style: "cancel",
-            },
-            {text: "Ok", onPress: () => console.log("Ok Pressed")},
-        ]);
+        }
     };
     const navigateToHome = () => {
-        props.navigation.navigate("Home");
+        navigation.navigate("Home");
     };
 
     return (
@@ -93,16 +116,16 @@ const LoginScreen = (props) => {
                 setValue={setUsername}
                 secureTextEntry={false}
             />
+            <Text style={styles.errorTxt}>{usernameError}</Text>
             <CustomInput
                 value={password}
                 placeholder={"password"}
                 setValue={setPassword}
                 secureTextEntry={true}
             />
-            <CustomBottom title={'Login'} onPress={doLogin}/>
-            <CustomBottom title={'Back to home screen'} onPress={navigateToHome}/>
+            <Text style={styles.errorTxt}>{passwordError}</Text>
+            <CustomBottom title={"Login"} onPress={doLogin}/>
         </View>
     );
 };
 export default LoginScreen;
-
